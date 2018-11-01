@@ -3,9 +3,7 @@ package ustc.sse.springboot.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ustc.sse.springboot.dao.DepartmentDao;
 import ustc.sse.springboot.dao.EmployeeDao;
 import ustc.sse.springboot.entities.Department;
@@ -61,6 +59,44 @@ public class CustomerController {
     @PostMapping("/emp")
     public String addEmp(Employee employee){
         System.out.println(employee);
+        employeeDao.save(employee);
         return "redirect:/emps";
+    }
+
+    /**
+     * 跳转到修改页面
+     * @param id
+     * @param model
+     * @return
+     */
+   @GetMapping("/emp/{id}")
+    public String toEditPage(@PathVariable("id")Integer id,Model model){
+
+       Employee employee = employeeDao.get(id);
+       System.out.println(employee);
+       model.addAttribute("emp",employee);
+       Collection<Department> departments = departmentDao.getDepartments();
+       model.addAttribute("depts",departments);
+       // 修改添加二合一页面
+       return "emp/add";
+    }
+
+    @PutMapping("/emp")
+    public String updateEmp(Employee employee ){
+
+       System.out.println(employee);
+       employeeDao.save(employee);
+       return "redirect:/emps";
+    }
+
+    /**
+     * 删除员工
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/emp/{id}")
+    public String deleteEmp(@PathVariable("id") Integer id){
+       employeeDao.delete(id);
+       return "redirect:/emps";
     }
 }
